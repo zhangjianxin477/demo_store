@@ -1,0 +1,1299 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2">
+    <link rel="apple-touch-icon" href="assets/favicon.svg?v=2">
+    <link rel="manifest" href="manifest.json?v=2">
+    <meta name="theme-color" content="#4f46e5">
+    <title>CoreNote - 知识管理平台</title>
+<link rel="stylesheet" href="css/style.css?v=51">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a class="logo" onclick="navigateTo('kg')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                    </svg>
+                    <span>Knowledge Hub</span>
+                </a>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab convert-tab" onclick="openConvertDialog()" title="文档格式转化">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6M9 15l3-3 3 3"/></svg>
+                    格式转化
+                </button>
+                <button class="nav-tab active" data-page="kg" onclick="navigateTo('kg')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><line x1="6" y1="9" x2="12" y2="15"/><line x1="18" y1="9" x2="12" y2="15"/></svg>
+                    知识图谱
+                </button>
+                <button class="nav-tab" data-page="rag" onclick="navigateTo('rag')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    知识库问答
+                </button>
+            </nav>
+            <div class="header-right">
+                <span class="access-role-badge" id="access-role-badge" hidden></span>
+                <span class="header-status" id="system-status">
+                    <span class="status-dot"></span>
+                    在线
+                </span>
+                <button class="icon-btn settings-trigger" onclick="openSettingsHub('overview')" title="系统设置与 Agent 管理">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1a2 2 0 0 1-2.8 2.8l-.1-.1a2 2 0 0 0-3.4 1.4v.2a2 2 0 0 1-4 0v-.2a2 2 0 0 0-3.4-1.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A2 2 0 0 0 1.7 11H1.5a2 2 0 0 1 0-4h.2a2 2 0 0 0 1.4-3.4L3 3.5A2 2 0 1 1 5.8.7l.1.1A2 2 0 0 0 9.3-.6V-.8a2 2 0 0 1 4 0v.2a2 2 0 0 0 3.4 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A2 2 0 0 0 20.9 7h.2a2 2 0 0 1 0 4h-.2a2 2 0 0 0-1.5 4Z" transform="translate(0 4)"/></svg>
+                    <span class="settings-trigger-label">设置</span>
+                </button>
+                <button class="icon-btn" onclick="handleLogout()" title="退出登录" style="font-size:12px;opacity:0.7">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="workspace">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">文件资源</span>
+                    <div class="sidebar-actions">
+                        <button class="icon-btn" onclick="createNewFolder()" title="新建文件夹">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                        </button>
+                        <button class="icon-btn" onclick="createNewFile()" title="新建文件">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                        </button>
+                        <button class="icon-btn" onclick="openLocalFolder()" title="打开文件夹">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        </button>
+                        <button class="icon-btn" onclick="openLocalFile()" title="打开文件">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </button>
+                        <button class="icon-btn" onclick="downloadAllFileResources(event)" title="下载全部文件">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="sidebar-search">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="file-search" placeholder="搜索文件..." oninput="filterFiles(this.value)">
+                </div>
+                <div class="sidebar-tree" id="file-tree">
+                    <div class="tree-empty">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        <p>点击上方按钮打开文件夹</p>
+                        <p class="hint">或新建文件 / 文件夹</p>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="sidebar-stats" id="sidebar-stats">
+                        <span id="stat-files">0 个文件</span>
+                        <span id="stat-nodes">0 节点</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="resizer" id="sidebar-resizer"></div>
+
+            <main class="main-content">
+                <div id="page-kg" class="page active">
+                    <div class="three-col">
+                        <div class="col-center kg-reader-col">
+                            <div class="kg-reader-shell">
+                                <article class="kg-reader md-content" id="kg-md-reader">
+                                    <div class="kg-reader-empty">
+                                        <div class="kg-reader-empty-title">选择左侧 Markdown 文件</div>
+                                        <div class="kg-reader-empty-subtitle">中间区域会以阅读模式渲染内容，右上角图谱按文件名相关度连接文档。</div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+
+                        <div class="resizer" id="kg-resizer"></div>
+
+                        <div class="col-right" id="kg-right-panel">
+                            <div class="panel">
+                                <div class="kg-side-graph">
+                                    <div class="kg-side-graph-head">
+                                        <span>INTERACTIVE GRAPH</span>
+                                        <div class="kg-side-graph-actions">
+                                            <button class="icon-btn sm" data-kg-graph-open="current" title="当前文档图谱">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 7.5 10 10"/><path d="M17 7.5 14 10"/><path d="M7 16.5 10 14"/><path d="M17 16.5 14 14"/></svg>
+                                            </button>
+                                            <button class="icon-btn sm" data-kg-graph-open="global" title="全局图谱">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="kg-side-graph-box" title="点击节点打开对应文档">
+                                        <canvas id="kg-mini-canvas"></canvas>
+                                    </div>
+                                </div>
+                                <div class="panel-header">
+                                    <div class="right-view-tabs">
+                                        <button class="view-tab active" data-view="info" onclick="switchKGRightView('info')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                            目录
+                                        </button>
+                                        <button class="view-tab" data-view="chat" onclick="switchKGRightView('chat')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                            问答
+                                        </button>
+                                    </div>
+                                    <button class="icon-btn sm" onclick="toggleKGRightPanel()" title="收起/放出面板" style="margin-left:auto">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                                    </button>
+                                </div>
+                                <div class="panel-body chat-panel" id="kg-chat-panel" style="display:none">
+                                    <div class="chat-messages" id="kg-chat-messages">
+                                        <div class="chat-msg assistant">
+                                            <div class="chat-avatar">AI</div>
+                                            <div class="chat-bubble">
+                                                你好！我是文档库问答助手。我会基于左侧文件资源库里的文档帮你检索和回答。
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chat-input-box">
+                                        <textarea id="kg-chat-input" placeholder="输入问题，基于左侧文件资源库问答..." rows="2" onkeydown="kgChatKeyDown(event)"></textarea>
+                                        <button class="send-btn" onclick="sendKGQuery()">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="panel-body" id="kg-node-info-panel">
+                                    <div class="node-info" id="kg-node-info">
+                                        <div class="info-empty">
+                                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                            <p>选择 Markdown 文件后显示本文目录</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-rag" class="page">
+                    <div class="three-col">
+                        <div class="col-center">
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <div class="center-view-tabs">
+                                        <button class="view-tab active" data-view="chat" onclick="switchRAGView('chat')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                            问答
+                                        </button>
+                                        <button class="view-tab" data-view="editor" onclick="switchRAGView('editor')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            文件
+                                        </button>
+                                        <button class="view-tab" data-view="kb" onclick="switchRAGView('kb')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                            知识库
+                                        </button>
+                                    </div>
+                                    <div class="panel-actions">
+                                        <span class="rag-mode-indicator" id="rag-mode-indicator">模式：标准 RAG</span>
+                                        <select class="search-mode-select" id="rag-search-mode" onchange="setRAGSearchMode(this.value)">
+                                            <option value="hybrid">混合检索</option>
+                                            <option value="semantic">语义检索</option>
+                                            <option value="keyword">关键词检索</option>
+                                        </select>
+                                        <select class="search-mode-select" id="rag-top-k" onchange="setRAGTopK(this.value)" title="重排输出条数">
+                                            <option value="3">Top 3</option>
+                                            <option value="5" selected>Top 5</option>
+                                            <option value="8">Top 8</option>
+                                        </select>
+                                        <div style="position:relative;display:inline-block">
+                                            <button class="search-mode-select rag-kb-multi-btn" id="rag-kb-multi-btn" onclick="toggleMultiKBSelect()">
+                                                <span id="rag-kb-multi-label">全部知识库</span>
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                            <div id="rag-kb-multi-dropdown" class="rag-kb-multi-dropdown" style="display:none">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body chat-panel rag-chat-panel" id="rag-chat-view">
+                                    <div class="rag-chat-scroll-wrap">
+                                        <div class="rag-turn-index" id="rag-turn-index" aria-label="当轮会话索引" hidden></div>
+                                        <div class="chat-messages rag-chat-messages" id="rag-chat-messages">
+                                            <div class="chat-msg assistant" id="rag-msg-0" data-rag-msg-index="0">
+                                                <div class="chat-avatar">AI</div>
+                                                <div class="chat-bubble">
+                                                    你好！我是知识库问答助手。请先在“知识库”标签页创建知识库并上传文档，然后向我提问。我支持混合检索（向量 + 关键词），也可以开启联网搜索获取更多信息。
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="rag-agent-options" id="rag-agent-options" style="display:none">
+                                        <label>任务类型
+                                            <select id="rag-agent-template">
+                                                <option value="auto">自动识别意图</option>
+                                                <option value="research">主题研究</option>
+                                                <option value="qa">知识库问答</option>
+                                                <option value="summarize">文章摘要</option>
+                                                <option value="compare">对比分析</option>
+                                                <option value="fact_check">事实核查</option>
+                                                <option value="timeline">时间线梳理</option>
+                                                <option value="hotspot">热点汇总</option>
+                                                <option value="wechat">公众号文章</option>
+                                                <option value="xiaohongshu">小红书笔记</option>
+                                                <option value="weekly">周报</option>
+                                            </select>
+                                        </label>
+                                        <label>输出
+                                            <select id="rag-agent-format">
+                                                <option value="markdown">Markdown 草稿</option>
+                                                <option value="pdf">PDF 报告</option>
+                                            </select>
+                                        </label>
+                                        <span class="rag-agent-hint">Agent 将展示执行阶段，结果生成后仍需人工审核</span>
+                                        <button type="button" class="toolbar-btn" onclick="showRAGAgentTaskHistory()" title="查看 Agent 任务历史">任务记录</button>
+                                        <button type="button" class="toolbar-btn" onclick="showKnowledgeReview()" title="生成今日知识复习题">今日复习</button>
+                                    </div>
+                                    <div class="chat-input-box rag-composer">
+                                        <textarea id="rag-chat-input" placeholder="输入你的问题，或将左侧文件/文件夹拖到这里..." rows="3" onkeydown="ragChatKeyDown(event)"></textarea>
+                                        <div id="rag-resource-selection" class="rag-resource-selection" aria-live="polite"></div>
+                                        <div class="rag-composer-footer">
+                                            <div class="chat-toolbar rag-composer-tools">
+                                                <button class="toolbar-btn rag-agent-toggle" id="rag-agent-toggle" onclick="toggleRAGAgentMode()" data-tooltip="切换 Agent 工作台">
+                                                    <span style="font-size:12px;font-weight:600">Agent RAG</span>
+                                                </button>
+                                                <button class="toolbar-btn" onclick="rewriteRAGQuery()" data-tooltip="查询改写">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                                                </button>
+                                                <button class="toolbar-btn" onclick="expandRAGQuery()" data-tooltip="扩展查询">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                                                </button>
+                                                <button class="toolbar-btn write-access-only" onclick="uploadToServer()" data-tooltip="上传文档">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                </button>
+                                                <button class="toolbar-btn" id="rag-web-search-btn" onclick="toggleWebSearch()" data-tooltip="联网搜索" style="color:var(--text-muted)">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                                </button>
+                                                <button class="toolbar-btn" onclick="exportRAGChat()" data-tooltip="导出对话">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                                </button>
+                                                <button class="toolbar-btn eval-btn" onclick="openEvalDialog('rag')" data-tooltip="系统评估">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                                                </button>
+                                            </div>
+                                            <button class="send-btn" onclick="sendRAGQuery()">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body editor-view" id="rag-editor-view" style="display:none">
+                                    <div class="editor-toolbar">
+                                        <span class="editor-filename" id="rag-editor-filename">未打开文件</span>
+                                        <span class="cloud-save-status" data-cloud-save-status style="display:none"></span>
+                                        <div class="editor-actions">
+                                            <button class="icon-btn sm" id="rag-preview-toggle" onclick="toggleEditorPreview('rag')" title="切换预览模式">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                            </button>
+                                            <button class="icon-btn sm write-access-only" onclick="saveLocalFile()" title="保存 (Ctrl+S)">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="editor-content" id="rag-editor-content" placeholder="选择左侧文件查看内容..." spellcheck="false"></textarea>
+                                    <div class="editor-preview md-content" id="rag-editor-preview" style="display:none;flex:1;overflow-y:auto;padding:16px"></div>
+                                </div>
+                                <div class="panel-body" id="rag-kb-view" style="display:none">
+                                    <div class="rag-kb-page">
+                                        <div class="rag-kb-page-head">
+                                            <div>
+                                                <h3>知识库管理</h3>
+                                                <p>管理文档、分块、索引重建和上传入口</p>
+                                            </div>
+                                            <button class="rag-kb-create-btn" type="button" data-rag-create-kb>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                                <span>新建知识库</span>
+                                            </button>
+                                        </div>
+                                        <div id="kb-list-container" class="rag-kb-grid">
+                                            <div class="rag-kb-empty">
+                                                <p>暂无知识库，点击上方按钮创建</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resizer" id="rag-resizer"></div>
+
+                        <div class="col-right" id="rag-right-panel">
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <span class="panel-title">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span id="rag-right-title">会话记录</span>
+                                    </span>
+                                    <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+                                        <button class="icon-btn sm" id="rag-right-new-session" onclick="newRAGConversation()" title="新建会话">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                        </button>
+                                        <button class="icon-btn sm" id="rag-right-close" onclick="showRAGSessionPanel()" title="关闭引用" style="display:none">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                        </button>
+                                        <button class="icon-btn sm" onclick="toggleRAGRightPanel()" title="收起/放出面板">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="panel-body" id="rag-sessions-panel">
+                                    <div class="chunks-empty">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <p>历史会话会显示在这里</p>
+                                    </div>
+                                </div>
+                                <div class="panel-body rag-citations-panel" id="rag-citations-panel" style="display:none">
+                                    <div class="rag-chunks-list" id="rag-chunks-list"></div>
+                                    <div class="rag-chunk-detail" id="rag-chunk-detail" style="display:none"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <div class="modal-overlay settings-hub-overlay" id="settings-hub" style="display:none">
+            <div class="settings-hub">
+                <div class="settings-hub-sidebar">
+                    <div class="settings-hub-brand"><span class="settings-hub-mark">⚙</span><div><strong>系统设置</strong><small>Knowledge Hub</small></div></div>
+                    <div class="settings-hub-nav" role="tablist">
+                        <button class="settings-hub-nav-item active" data-settings-panel="overview" onclick="switchSettingsPanel('overview')"><span>▦</span>运行概览</button>
+                        <button class="settings-hub-nav-item" data-settings-panel="models" onclick="switchSettingsPanel('models')"><span>⌁</span>模型与 API Key</button>
+                        <button class="settings-hub-nav-item" data-settings-panel="mcp" onclick="switchSettingsPanel('mcp')"><span>⟁</span>MCP 连接</button>
+                        <button class="settings-hub-nav-item" data-settings-panel="skills" onclick="switchSettingsPanel('skills')"><span>✦</span>Skill 管理</button>
+                        <button class="settings-hub-nav-item" data-settings-panel="email" onclick="switchSettingsPanel('email')"><span>✉</span>邮件通道</button>
+                    </div>
+                    <div class="settings-hub-sidebar-foot">配置保存在当前服务端<br>敏感字段仅显示脱敏状态</div>
+                </div>
+                <div class="settings-hub-main">
+                    <div class="settings-hub-header"><div><div class="settings-hub-kicker">WORKSPACE SETTINGS</div><h2 id="settings-hub-title">运行概览</h2></div><button class="icon-btn" onclick="closeSettingsHub()" title="关闭">×</button></div>
+                    <div id="settings-hub-content" class="settings-hub-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="passive-skills-modal" style="display:none">
+            <div class="modal" style="width:min(900px,94vw);max-height:88vh;overflow:auto">
+                <div class="modal-header"><div class="convert-modal-title"><span style="font-size:18px">被动信息输入 / Skill</span></div><button class="icon-btn" onclick="closePassiveSkillsDialog()">×</button></div>
+                <div class="modal-body">
+                    <p style="color:var(--text-secondary);font-size:13px;margin-top:0;line-height:1.6">这是被动信息输入工作台。Agent 会读取已挂载 Skill 的完整工作流，执行采集、清洗、筛选、摘要、汇总和投递；试跑只生成日报，不发送邮件。</p>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px"><input id="passive-skill-file" type="file" accept=".md,.markdown,text/markdown"><button class="btn btn-primary" onclick="uploadPassiveSkill()">上传 / 挂载 Skill</button><button class="btn" onclick="loadPassiveSkills()">刷新</button><button class="btn" onclick="runWeeklyReview(false)">生成本周综述</button><button class="btn" onclick="configureKnowledgeReview()">提醒偏好</button><button class="btn" onclick="showEmailConfig()">邮件设置</button><button class="btn" onclick="testPassiveEmail()">真实发信测试</button></div>
+                    <div id="passive-upload-status" style="min-height:18px;color:var(--text-muted);font-size:11px;margin-bottom:10px"></div>
+                    <div id="passive-email-status" class="passive-help" style="margin-bottom:14px">正在读取邮件通道状态…</div>
+                    <div id="passive-skills-list" style="display:grid;gap:10px"><div style="color:var(--text-secondary)">正在加载…</div></div>
+                    <h4 style="margin:18px 0 8px">最近运行</h4><div id="passive-runs-list" style="display:grid;gap:8px"><div style="color:var(--text-secondary)">暂无运行记录</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="convert-modal" style="display:none">
+            <div class="modal convert-modal">
+                <div class="modal-header">
+                    <div class="convert-modal-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6M9 15l3-3 3 3"/></svg>
+                        <span>文档格式转化</span>
+                    </div>
+                    <button class="icon-btn" onclick="closeConvertDialog()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="convert-upload-section">
+                        <div class="convert-drop-zone" id="convert-drop-zone" onclick="document.getElementById('convert-file-input').click()">
+                            <div class="convert-drop-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            </div>
+                            <p class="convert-drop-title">点击或拖拽文件到此处</p>
+                            <p class="convert-drop-hint">支持 PDF、Office、Markdown、HTML、JSON、YAML、XML、RTF、ODT、EPUB、图片等格式</p>
+                            <div class="convert-format-tags">
+                                <span class="format-tag">PDF</span>
+                                <span class="format-tag">Word</span>
+                                <span class="format-tag">Excel</span>
+                                <span class="format-tag">PPT</span>
+                                <span class="format-tag">HTML</span>
+                                <span class="format-tag">JSON</span>
+                                <span class="format-tag">YAML / XML</span>
+                                <span class="format-tag">CSV</span>
+                                <span class="format-tag">RTF / ODT / EPUB</span>
+                                <span class="format-tag">Markdown</span>
+                                <span class="format-tag">图片</span>
+                            </div>
+                        </div>
+                        <input type="file" id="convert-file-input" hidden accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.csv,.txt,.md,.markdown,.json,.yaml,.yml,.xml,.rtf,.odt,.epub,.html,.htm,.png,.jpg,.jpeg,.bmp,.tiff,.tif,.gif,.webp,.svg" onchange="handleConvertFile(this.files)">
+                    </div>
+
+                    <div id="convert-progress-section" style="display:none">
+                        <div class="convert-file-info">
+                            <div class="convert-file-icon" id="convert-file-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div class="convert-file-detail">
+                                <div class="convert-file-name" id="convert-file-name"></div>
+                                <div class="convert-file-meta" id="convert-file-meta"></div>
+                            </div>
+                        </div>
+                        <div class="convert-progress-bar">
+                            <div class="convert-progress-track">
+                                <div class="convert-progress-fill" id="convert-progress-fill" style="width:0%"></div>
+                                <div class="convert-progress-glow" id="convert-progress-glow" style="left:0%"></div>
+                            </div>
+                            <div class="convert-progress-info">
+                                <span class="convert-progress-status" id="convert-progress-status">正在解析...</span>
+                                <span class="convert-progress-percent" id="convert-progress-percent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="convert-result-section" style="display:none">
+                        <div class="convert-result-header">
+                            <div class="convert-result-file">
+                                <div class="convert-file-icon convert-file-icon-success">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                </div>
+                                <div>
+                                    <div class="convert-result-name" id="convert-result-name"></div>
+                                    <div class="convert-result-meta" id="convert-result-meta"></div>
+                                </div>
+                            </div>
+                            <div class="convert-result-actions">
+                                <button class="btn-sm" onclick="downloadConverted()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    下载
+                                </button>
+                                <button class="btn-sm" onclick="resetConvertDialog()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                    重新转换
+                                </button>
+                            </div>
+                        </div>
+                        <div class="convert-send-actions">
+                            <div class="send-action-card" onclick="sendConvertedToFileLibrary()">
+                                <div class="send-action-icon send-action-icon-file">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h7l2 2h7v14H4z"/><path d="M8 12h8M8 16h5"/></svg>
+                                </div>
+                                <div class="send-action-text">
+                                    <div class="send-action-title">发送到文件目录</div>
+                                    <div class="send-action-desc">选择目录 → 保存为 Markdown 文件</div>
+                                </div>
+                            </div>
+                            <div class="send-action-card" onclick="sendConvertedToKB()">
+                                <div class="send-action-icon send-action-icon-kb">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                </div>
+                                <div class="send-action-text">
+                                    <div class="send-action-title">发送到知识库</div>
+                                    <div class="send-action-desc">分块 → 向量化 → 语义检索</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="convert-preview-tabs">
+                            <button class="preview-tab active" data-tab="source" onclick="switchConvertPreview('source')">Markdown 源码</button>
+                            <button class="preview-tab" data-tab="rendered" onclick="switchConvertPreview('rendered')">渲染预览</button>
+                        </div>
+                        <div class="convert-preview-container">
+                            <textarea class="convert-preview" id="convert-preview" readonly></textarea>
+                            <div class="convert-preview-rendered" id="convert-preview-rendered" style="display:none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast-container" id="toast-container"></div>
+
+        <input type="file" id="upload-input" multiple hidden accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.csv,.txt,.md,.markdown,.json,.yaml,.yml,.xml,.rtf,.odt,.epub,.html,.htm,.png,.jpg,.jpeg,.bmp,.tiff,.tif,.gif,.webp,.svg">
+    </div>
+
+    <script>
+        window.API_BASE = window.API_BASE || '/api/v1';
+    </script>
+    <script src="js/marked.min.js?v=15.0.12"></script>
+    <script src="js/db.js?v=1"></script>
+    <script src="js/local-embedding.js?v=2"></script>
+    <script src="js/store.js?v=1"></script>
+    <script src="js/autosave.js?v=3"></script>
+    <script src="js/i18n.js?v=1"></script>
+    <!-- O2: ES 模块拆分 -->
+    <script src="js/modules/ui.js?v=2"></script>
+    <script src="js/modules/converters.js?v=1"></script>
+    <script src="js/modules/api.js?v=15"></script>
+    <script src="js/telemetry.js?v=2"></script>
+    <!-- O7: Web Components 组件 -->
+    <script src="js/modules/components.js?v=1"></script>
+    <script src="js/kg.js?v=28"></script>
+    <script src="js/rag.js?v=35"></script>
+    <script src="js/passive.js?v=8"></script>
+    <script src="js/wiki.js?v=3"></script>
+    <script src="js/wiki-editor.js?v=1"></script>
+    <script src="js/command-palette.js?v=3"></script>
+    <script src="js/enhancements.js?v=3"></script>
+
+    <script src="js/app.js?v=67"></script>
+<script src="js/settings-hub.js?v=7"></script>
+
+<div class="login-overlay is-active" id="login-overlay">
+    <div class="login-container">
+        <div class="login-left">
+            <div class="login-left-brand">
+                <div class="login-left-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                    </svg>
+                    Knowledge Hub
+                </div>
+                <div class="login-left-tagline">连接知识，探索无限可能</div>
+            </div>
+            <div class="characters-scene">
+                <div class="character char-purple" style="z-index:1">
+                    <div class="char-inner">
+                        <div class="char-body"></div>
+                        <div class="char-eyes">
+                            <div class="eye eye-left"><div class="pupil"></div></div>
+                            <div class="eye eye-right"><div class="pupil"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="character char-orange" style="z-index:4">
+                    <div class="char-inner">
+                        <div class="char-body"></div>
+                        <div class="char-eyes">
+                            <div class="eye-dot eye-dot-left"></div>
+                            <div class="eye-dot eye-dot-right"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="character char-black" style="z-index:2">
+                    <div class="char-inner">
+                        <div class="char-body"></div>
+                        <div class="char-eyes">
+                            <div class="eye eye-left"><div class="pupil"></div></div>
+                            <div class="eye eye-right"><div class="pupil"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="character char-yellow" style="z-index:3">
+                    <div class="char-inner">
+                        <div class="char-body"></div>
+                        <div class="char-eyes">
+                            <div class="eye-dot eye-dot-left"></div>
+                            <div class="eye-dot eye-dot-right"></div>
+                        </div>
+                        <div class="char-mouth"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="login-right">
+            <div class="login-brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                </svg>
+                <span>Knowledge Hub</span>
+            </div>
+            <h1 class="login-title">欢迎回来</h1>
+            <p class="login-subtitle">登录 CoreNote 继续管理知识</p>
+
+            <form class="login-form" id="login-form" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-username">账号</label>
+                    <input type="text" id="login-username" placeholder="请输入账号" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="请输入密码" autocomplete="current-password"
+                               onfocus="onPasswordFocus()" onblur="onPasswordBlur()" oninput="onPasswordInput()" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+                            <svg id="eye-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <svg id="eye-icon-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="login-remember">
+                        <span class="checkmark"></span>
+                        在此设备保持登录
+                    </label>
+                </div>
+            </form>
+            <div class="login-actions-row">
+                <button type="submit" form="login-form" class="btn-login" id="owner-login-btn">账号登录</button>
+                <button type="button" class="btn-guest-login" id="guest-login-btn" onclick="handleGuestLogin()">
+                    游客只读访问
+                </button>
+            </div>
+            <p class="login-access-note">游客可阅读、检索和问答，不能编辑或删除数据</p>
+            <div class="login-compliance-footer" aria-label="网站备案信息">
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">ICP备案/许可证号:湘ICP备2026014202号-2</a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+/* 全局设计变量 */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #60a5fa;
+    --primary-bg: #eff6ff;
+    --success: #10b981;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border: #e2e8f0;
+    --bg-white: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+    --radius: 12px;
+    --radius-lg: 16px;
+}
+
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background-color: #1f3442;
+    background-image: linear-gradient(rgba(18, 35, 42, 0.18), rgba(18, 35, 42, 0.18)), url('assets/0891091ccf62b8aa043d32cdeb7dbbac-landscape.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    animation: fadeIn 0.4s ease-out;
+    overscroll-behavior: none;
+    touch-action: none;
+    pointer-events: none;
+}
+.login-overlay.is-active {
+    display: flex;
+    pointer-events: auto;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.login-container {
+    display: flex;
+    width: min(920px, 95vw);
+    max-width: 95vw;
+    height: min(560px, 92vh);
+    max-height: 92vh;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28), 0 4px 18px rgba(15, 23, 42, 0.12);
+}
+.login-left {
+    flex: 0 0 44%;
+    background-color: rgba(221, 235, 245, 0.78);
+    background-image: linear-gradient(rgba(221, 235, 245, 0.74), rgba(221, 235, 245, 0.88)), url('assets/0891091ccf62b8aa043d32cdeb7dbbac-landscape.jpg');
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 60px;
+}
+/* 添加品牌标识到左侧 */
+.login-left-brand {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 5;
+}
+.login-left-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #203247;
+    font-weight: 700;
+    font-size: 20px;
+}
+.login-left-logo svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1)); }
+.login-left-tagline {
+    color: #526779;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.characters-scene {
+    position: relative;
+    width: 320px;
+    height: 360px;
+    z-index: 2;
+    margin-bottom: 40px;
+}
+
+.character {
+    position: absolute;
+    bottom: 0;
+}
+.char-inner {
+    transform-origin: bottom center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.char-orange .char-inner { transition-delay: 0.05s; }
+.char-black .char-inner { transition-delay: 0.1s; }
+.char-yellow .char-inner { transition-delay: 0.15s; }
+.char-purple .char-inner { transition-delay: 0.2s; }
+.char-body {
+    border-radius: 0;
+    position: relative;
+}
+.char-eyes {
+    position: absolute;
+    top: 26%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+}
+.eye {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+.pupil {
+    width: 6px;
+    height: 6px;
+    background: #1e293b;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s;
+}
+.eye-dot {
+    width: 8px;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 50%;
+    display: inline-block;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s;
+}
+.char-mouth {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 3px;
+    background: #1e293b;
+}
+
+.char-purple.peeking .char-inner { transform: skewX(-12deg); }
+.char-black.peeking .char-inner { transform: skewX(-5deg); }
+.char-orange.peeking .char-inner { transform: skewX(-3deg); }
+.char-yellow.peeking .char-inner { transform: skewX(-3deg); }
+.char-purple.peeking .pupil { transform: translate(calc(-50% + 4px), calc(-50% + 3px)); }
+.char-black.peeking .pupil { transform: translate(calc(-50% + 4px), calc(-50% + 3px)); }
+.char-orange.peeking .eye-dot { transform: translateX(10px); }
+.char-yellow.peeking .eye-dot { transform: translateX(10px); }
+.char-yellow.peeking .char-mouth { transform: translateX(calc(-50% + 12px)); }
+.char-yellow .char-eyes { top: 20%; gap: 14px; }
+.char-yellow .char-mouth { top: 38%; transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s; }
+
+.char-orange {
+    left: -20px; bottom: 0;
+}
+.char-orange .char-body {
+    width: 170px;
+    height: 140px;
+    background: #ff9b70;
+    border-radius: 85px 85px 0 0;
+}
+.char-orange .char-eyes { top: 50%; gap: 20px; }
+
+.char-purple {
+    left: 75px; bottom: 0;
+}
+.char-purple .char-body {
+    width: 120px;
+    height: 330px;
+    background: #7c5cff;
+    border-radius: 15px 15px 0 0;
+}
+.char-purple .char-eyes { top: 12%; gap: 12px; }
+.char-purple .eye { width: 12px; height: 12px; }
+.char-purple .pupil { width: 5px; height: 5px; }
+
+.char-black {
+    left: 150px; bottom: 0;
+}
+.char-black .char-body {
+    width: 80px;
+    height: 230px;
+    background: #333333;
+    border-radius: 12px 12px 0 0;
+}
+.char-black .char-eyes { top: 13%; gap: 10px; }
+.char-black .eye { width: 10px; height: 10px; }
+.char-black .pupil { width: 5px; height: 5px; }
+
+.char-yellow {
+    left: 197px; bottom: 0;
+}
+.char-yellow .char-body {
+    width: 95px;
+    height: 170px;
+    background: #f0da5c;
+    border-radius: 47px 47px 0 0;
+}
+.char-yellow .char-mouth { top: 38%; transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s; }
+
+.login-right {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 58px 36px;
+    background: rgba(255, 255, 255, 0.93);
+    border-left: 1px solid rgba(226, 232, 240, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.login-brand {
+    display: none; /* 已移到左侧 */
+}
+.login-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+    letter-spacing: -0.4px;
+}
+.login-subtitle {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin: 0 0 30px;
+}
+.login-form { width: 100%; max-width: 360px; }
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    background: var(--bg-white);
+    font-family: inherit;
+}
+.form-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+}
+.password-wrapper {
+    position: relative;
+}
+.password-wrapper input { padding-right: 48px; }
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+    border-radius: 8px;
+}
+.password-toggle:hover { color: var(--text-primary); background: rgba(0,0,0,0.03); }
+.form-options {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    user-select: none;
+}
+.checkbox-label input { display: none; }
+.checkmark {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    position: relative;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+.checkbox-label input:checked + .checkmark {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+.checkbox-label input:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 5.5px; top: 2px;
+    width: 5px; height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.forgot-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+.forgot-link:hover { text-decoration: underline; }
+.btn-login {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+}
+.btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+.btn-login:active { transform: translateY(0); }
+
+.login-actions-row {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+.btn-guest-login {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 13px;
+    color: #334155;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+.btn-guest-login:hover {
+    color: var(--primary);
+    border-color: var(--primary-light);
+    background: var(--primary-bg);
+}
+.btn-login:disabled,
+.btn-guest-login:disabled {
+    cursor: wait;
+    opacity: 0.62;
+}
+.login-access-note {
+    max-width: 360px;
+    margin: 12px 0 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.login-compliance-footer {
+    width: 100%;
+    max-width: 360px;
+    margin-top: auto;
+    padding-top: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.login-compliance-footer a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.16s ease;
+}
+
+.login-compliance-footer a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.signup-text { font-size: 14px; color: var(--text-secondary); }
+.signup-text a { color: var(--primary); text-decoration: none; font-weight: 700; }
+.signup-text a:hover { text-decoration: underline; }
+
+@media (max-width: 720px) {
+    .login-container { flex-direction: column; height: auto; max-height: 95vh; border-radius: 20px; }
+    .login-left { flex: 0 0 220px; min-height: 210px; padding-bottom: 20px; }
+    .login-left-brand { top: 18px; left: 18px; }
+    .characters-scene { transform: scale(0.6); width: 320px; height: 300px; }
+    .login-right { padding: 32px 28px 28px; border-left: 0; border-top: 1px solid rgba(226, 232, 240, 0.9); }
+    .login-title { font-size: 26px; }
+}
+
+@media (max-width: 480px) {
+    .login-left { flex: 0 0 190px; min-height: 180px; }
+    .characters-scene { transform: scale(0.5); }
+    .login-right { padding: 26px 20px 24px; }
+    .login-actions-row { flex-direction: column; }
+    .login-compliance-footer { padding-top: 16px; }
+}
+</style>
+<script>
+function onPasswordFocus() {
+    document.querySelectorAll('.character').forEach(char => {
+        char.classList.add('peeking');
+    });
+}
+
+function onPasswordBlur() {
+    document.querySelectorAll('.character').forEach(char => {
+        char.classList.remove('peeking');
+    });
+}
+
+function onPasswordInput() {
+    const pw = document.getElementById('login-password').value;
+    if (pw.length > 0) {
+        onPasswordFocus();
+    }
+}
+
+function togglePasswordVisibility() {
+    const input = document.getElementById('login-password');
+    const openIcon = document.getElementById('eye-icon-open');
+    const closedIcon = document.getElementById('eye-icon-closed');
+    if (input.type === 'password') {
+        input.type = 'text';
+        openIcon.style.display = '';
+        closedIcon.style.display = 'none';
+        document.querySelectorAll('.character').forEach(char => {
+            char.classList.remove('peeking');
+        });
+    } else {
+        input.type = 'password';
+        openIcon.style.display = 'none';
+        closedIcon.style.display = '';
+        onPasswordFocus();
+    }
+}
+
+function setLoginBusy(isBusy) {
+    const ownerBtn = document.getElementById('owner-login-btn');
+    const guestBtn = document.getElementById('guest-login-btn');
+    if (ownerBtn) ownerBtn.disabled = isBusy;
+    if (guestBtn) guestBtn.disabled = isBusy;
+}
+
+function clearAccessSession() {
+    const keys = [
+        KH_ACCESS_TOKEN_KEY,
+        KH_REFRESH_TOKEN_KEY,
+        KH_ACCESS_ROLE_KEY,
+        KH_ACCESS_PERMISSIONS_KEY,
+        'kh_login_user',
+        'kh_logged_in',
+    ];
+    for (const key of keys) {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+    }
+}
+
+function storeAccessSession(data, remember) {
+    clearAccessSession();
+    const storage = remember ? localStorage : sessionStorage;
+    storage.setItem(KH_ACCESS_TOKEN_KEY, data.access_token || '');
+    storage.setItem(KH_REFRESH_TOKEN_KEY, data.refresh_token || '');
+    storage.setItem(KH_ACCESS_ROLE_KEY, data.role || 'owner');
+    storage.setItem(KH_ACCESS_PERMISSIONS_KEY, JSON.stringify(data.permissions || ['read']));
+    storage.setItem('kh_login_user', data.user_id || '');
+    storage.setItem('kh_logged_in', 'true');
+}
+
+function applyAccessMode(role, userId, permissions = []) {
+    const isGuest = role === 'guest' || !permissions.includes('write');
+    document.body.classList.toggle('access-guest', isGuest);
+    document.body.dataset.accessRole = isGuest ? 'guest' : 'owner';
+
+    const badge = document.getElementById('access-role-badge');
+    if (badge) {
+        badge.hidden = false;
+        badge.className = `access-role-badge ${isGuest ? 'guest' : 'owner'}`;
+        badge.textContent = isGuest ? '游客 · 只读' : `${userId || '账号'} · 完整权限`;
+    }
+
+    if (isGuest && typeof kgReaderMode !== 'undefined') kgReaderMode = 'render';
+    const ragEditor = document.getElementById('rag-editor-content');
+    if (ragEditor) ragEditor.readOnly = isGuest;
+    if (typeof renderFileTree === 'function') renderFileTree();
+    if (typeof renderKBList === 'function') renderKBList();
+    if (typeof renderKGMarkdownReader === 'function') renderKGMarkdownReader();
+    if (!isGuest && typeof processPendingCloudSync === 'function') {
+        processPendingCloudSync({ silent: true }).catch(() => {});
+    }
+}
+
+function hideLoginOverlay() {
+    const overlay = document.getElementById('login-overlay');
+    overlay.style.transition = 'opacity 0.24s ease, transform 0.24s ease';
+    overlay.style.opacity = '0';
+    overlay.style.transform = 'scale(0.985)';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.classList.remove('is-active');
+        overlay.style.pointerEvents = 'none';
+    }, 240);
+}
+
+function showLoginOverlay() {
+    const overlay = document.getElementById('login-overlay');
+    overlay.classList.add('is-active');
+    overlay.style.display = 'flex';
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.opacity = '1';
+    overlay.style.transform = 'scale(1)';
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    const remember = document.getElementById('login-remember').checked;
+
+    if (!username || !password) return false;
+    setLoginBusy(true);
+    try {
+        const data = await api('POST', '/auth/login', { user_id: username, password }, 12000);
+        storeAccessSession(data, remember);
+        applyAccessMode(data.role, data.user_id, data.permissions || []);
+        hideLoginOverlay();
+    } catch (err) {
+        if (typeof showToast === 'function') showToast(`登录失败: ${err.message}`, 'error');
+    } finally {
+        setLoginBusy(false);
+    }
+    return false;
+}
+
+async function handleGuestLogin() {
+    setLoginBusy(true);
+    try {
+        const data = await api('POST', '/auth/guest', null, 12000);
+        storeAccessSession(data, false);
+        applyAccessMode(data.role, data.user_id, data.permissions || ['read']);
+        hideLoginOverlay();
+    } catch (err) {
+        if (typeof showToast === 'function') showToast(`游客登录失败: ${err.message}`, 'error');
+    } finally {
+        setLoginBusy(false);
+    }
+}
+
+function handleLogout() {
+    clearAccessSession();
+    document.body.classList.remove('access-guest');
+    delete document.body.dataset.accessRole;
+    showLoginOverlay();
+}
+
+async function checkLoginStatus() {
+    const token = getAccessToken();
+    if (!token) {
+        showLoginOverlay();
+        return;
+    }
+    try {
+        const data = await api('GET', '/auth/me', null, 10000);
+        applyAccessMode(data.role, data.user_id, data.permissions || []);
+        hideLoginOverlay();
+    } catch {
+        clearAccessSession();
+        showLoginOverlay();
+    }
+}
+
+(function() {
+    checkLoginStatus();
+
+    var overlay = document.getElementById('login-overlay');
+
+    function preventScroll(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+
+    overlay.addEventListener('touchmove', preventScroll, { passive: false });
+    overlay.addEventListener('wheel', preventScroll, { passive: false });
+
+    document.addEventListener('keydown', function(e) {
+        if (!overlay.classList.contains('is-active')) return;
+        if ((e.key === 'Escape' || e.keyCode === 27)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+})();
+</script>
+    <!-- Disable Service Worker: stale cached JS can break the cloud app. -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations()
+                .then((registrations) => registrations.forEach((registration) => registration.unregister()))
+                .catch(() => {});
+        }
+        if ('caches' in window) {
+            caches.keys()
+                .then((keys) => keys.filter((key) => key.startsWith('knowledge-hub')).forEach((key) => caches.delete(key)))
+                .catch(() => {});
+        }
+    </script>
+</body>
+</html>
+

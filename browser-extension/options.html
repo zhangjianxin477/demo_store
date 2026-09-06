@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CoreNote Web Clipper 设置</title>
+  <style>
+    body { max-width: 620px; margin: 40px auto; padding: 0 20px; font: 14px/1.5 system-ui, sans-serif; color: #1e293b; }
+    h1 { font-size: 22px; }
+    label { display: block; margin-top: 18px; margin-bottom: 6px; font-weight: 600; }
+    input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; }
+    .hint { margin-top: 4px; color: #64748b; font-size: 12px; }
+    button { margin-top: 22px; border: 0; border-radius: 8px; padding: 10px 18px; color: #fff; background: #4f46e5; cursor: pointer; font-weight: 600; }
+    #status { margin-left: 10px; color: #16a34a; }
+  </style>
+</head>
+<body>
+  <h1>CoreNote Web Clipper 设置</h1>
+  <label for="base-url">CoreNote 地址</label>
+  <input id="base-url" placeholder="http://localhost:8080">
+  <div class="hint">如本地开发，可填写 http://localhost:8080。</div>
+  <label for="api-key">API Key（可选）</label>
+  <input id="api-key" type="password" autocomplete="off" placeholder="kh_...">
+    <div class="hint">可留空。插件会优先读取已打开 CoreNote 页面的登录态；也可手动填写 API Key。</div>
+  <label for="access-token">Access Token（可选）</label>
+    <input id="access-token" type="password" autocomplete="off" placeholder="JWT access token（可留空，自动读取）">
+  <label for="space-id">默认 Wiki 空间 ID</label>
+  <input id="space-id" placeholder="default">
+  <label for="default-tags">默认标签</label>
+  <input id="default-tags" placeholder="网页采集, 待读整理">
+  <button id="save">保存设置</button><span id="status"></span>
+  <script src="options.js"></script>
+</body>
+</html>
+
+

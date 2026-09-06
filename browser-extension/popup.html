@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CoreNote Web Clipper</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    body { width: 330px; margin: 0; padding: 16px; color: #1e293b; background: #fff; }
+    h1 { margin: 0 0 4px; font-size: 17px; }
+    .sub { color: #64748b; font-size: 12px; margin-bottom: 14px; }
+    label { display: block; margin: 10px 0 5px; font-size: 12px; color: #475569; }
+    input { width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 7px; padding: 8px 9px; font: inherit; font-size: 13px; }
+    .preview { padding: 9px; border-radius: 8px; background: #f8fafc; font-size: 12px; line-height: 1.45; height: 220px; overflow-y: auto; white-space: pre-wrap; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+    button { border: 0; border-radius: 7px; padding: 9px 8px; cursor: pointer; font-weight: 600; }
+    .primary { color: #fff; background: #4f46e5; }
+    .secondary { color: #334155; background: #e2e8f0; }
+    button:disabled { opacity: .55; cursor: wait; }
+    #status { min-height: 18px; margin-top: 10px; font-size: 12px; color: #64748b; }
+    .footer { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; }
+    a { color: #4f46e5; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>CoreNote Web Clipper</h1>
+  <div class="sub">把网页内容保存到你的知识工作台</div>
+  <div id="preview" class="preview">正在读取当前页面…</div>
+  <label for="tags">标签（逗号分隔）</label>
+  <input id="tags" placeholder="例如：AI产品, 研究">
+  <div class="actions">
+    <button id="save-page" class="primary">保存当前页</button>
+    <button id="save-selection" class="secondary">保存选中内容</button>
+  </div>
+  <div id="status"></div>
+  <div class="footer"><a href="#" id="open-options">设置连接</a><a href="#" id="open-app">打开 CoreNote</a></div>
+  <script src="popup.js"></script>
+</body>
+</html>
+
+
+

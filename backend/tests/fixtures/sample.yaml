@@ -1,0 +1,7 @@
+product: CoreNote
+modules:
+  - knowledge_graph
+  - rag
+settings:
+  chunk_size: 900
+  overlap: 120

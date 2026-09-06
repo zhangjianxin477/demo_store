@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "CoreNote Web Clipper",
+  "short_name": "CoreNote Clipper",
+  "version": "0.6.0",
+  "description": "将网页正文或选中内容保存到 CoreNote 知识工作台",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "contextMenus",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://corenote.cloud/*",
+    "http://localhost:8080/*",
+    "http://127.0.0.1:8080/*"
+  ],
+  "action": {
+    "default_title": "保存到 CoreNote",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html"
+}

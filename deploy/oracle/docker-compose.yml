@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.free
+    container_name: knowledge-hub-app
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      APP_ENV: production
+      DEBUG: "false"
+      HOST: 0.0.0.0
+      PORT: 8080
+      DATA_DIR: /app/data
+      STORAGE_MODE: local
+      EMBEDDING_LOCAL_ENABLED: "false"
+      OCR_MODE: "off"
+      LAYOUT_ANALYSIS_ENABLED: "false"
+      TABLE_STRUCTURED_EXTRACTION: "false"
+      IMAGE_EXTRACTION_ENABLED: "false"
+    volumes:
+      - ./data:/app/data
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: knowledge-hub-caddy
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
